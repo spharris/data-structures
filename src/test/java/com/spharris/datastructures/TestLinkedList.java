@@ -134,4 +134,21 @@ public class TestLinkedList {
 			assertThat(l.get(i), equalTo(i));
 		}
 	}
+	
+	@Test
+	public void insertAtFront() {
+		LinkedList<Integer> l = new LinkedList<>();
+		
+		int numItems = 10;
+		for (int i = 0; i < numItems; i++) {
+			l.add(i);
+		}
+		
+		l.insert(0, 25);
+		assertThat(l.size(), equalTo(11));
+		assertThat(l.get(0), equalTo(25));
+		for (int i = 1; i < numItems + 1; i++) {
+			assertThat(l.get(i), equalTo(i - 1));
+		}
+	}
 }
