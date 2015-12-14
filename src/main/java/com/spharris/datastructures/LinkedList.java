@@ -52,31 +52,23 @@ public class LinkedList<T> {
 		size++;
 	}
 	
-	public T remove(int index) {
+	public T removeAt(int index) {
 		Node<T> node = getNode(index);
-		
-		if (node == first) {
-			first = node.getNext();
-		}
-		
-		if (node == last) {
-			last = node.getPrev();
-		}
-		
-		if (node.getPrev() != null) {
-			node.getPrev().setNext(node.getNext());
-		}
-		
-		if (node.getNext() != null) {
-			node.getNext().setPrev(node.getPrev());
-		}
-		
-		size--;
-		
+		removeNode(node);
+
 		return node.getData();
 	}
 	
 	public T remove(T item) {
+		Iterator it = new Iterator();
+		while (it.hasNext()) {
+			T data = it.next();
+			if (data.equals(item)) {
+				it.remove();
+				return data;
+			}
+		}
+		
 		return null;
 	}
 	
@@ -89,8 +81,10 @@ public class LinkedList<T> {
 	 * Returns true if there is at least one item in the list equal to item
 	 */
 	public boolean contains(T item) {
-		for (int i = 0; i < size; i++) {
-			if (get(i).equals(item)) {
+		Iterator it = new Iterator();
+		while (it.hasNext()) {
+			T data = it.next();
+			if (data.equals(item)) {
 				return true;
 			}
 		}
@@ -134,6 +128,74 @@ public class LinkedList<T> {
 		}
 		
 		return currentNode;
+	}
+	
+	/**
+	 * Assumes that node is contained in the list
+	 */
+	private Node<T> removeNode(Node<T> node) {
+		if (node == first) {
+			first = node.getNext();
+		}
+		
+		if (node == last) {
+			last = node.getPrev();
+		}
+		
+		if (node.getPrev() != null) {
+			node.getPrev().setNext(node.getNext());
+		}
+		
+		if (node.getNext() != null) {
+			node.getNext().setPrev(node.getPrev());
+		}
+		
+		size--;
+		
+		return node;
+	}
+	
+	private class Iterator {
+		
+		boolean hasStarted = false;
+		private Node<T> current;
+		
+		public T next() {
+			return nextNode().getData();
+		}
+		
+		public Node<T> nextNode() {
+			if (!hasNext()) {
+				throw new IndexOutOfBoundsException();
+			}
+
+			if (current == null) {
+				current = first;
+			} else {
+				current = current.getNext();
+			}
+			
+			return current;
+		}
+		
+		public boolean hasNext() {
+			if (current == null) {
+				if (!hasStarted && size > 0) {
+					return true;
+				} else {
+					return false;
+				}
+			} else if (current.getNext() == null) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+		
+		public T remove() {
+			removeNode(current);
+			return current.getData();
+		}
 	}
 	
 	private static class Node<T> {

@@ -115,12 +115,12 @@ public class TestLinkedList {
 	public void removeFromEmptyList() {
 		thrown.expect(IndexOutOfBoundsException.class);
 		
-		emptyList.remove(0);
+		emptyList.removeAt(0);
 	}
 	
 	@Test
 	public void removeFromOneItemList() {
-		int item = singleItemList.remove(0);
+		int item = singleItemList.removeAt(0);
 		
 		assertThat(singleItemList.size(), equalTo(0));
 		assertThat(item, equalTo(0));
@@ -128,29 +128,29 @@ public class TestLinkedList {
 	
 	@Test
 	public void removeFromStartOfList() {
-		int item = multiItemList.remove(0);
+		int item = multiItemList.removeAt(0);
 		assertThat(multiItemList.size(), equalTo(9));
 		assertThat(item, equalTo(0));
 	}
 	
 	@Test
 	public void removeFromEndOfList() {
-		int item = multiItemList.remove(9);
+		int item = multiItemList.removeAt(9);
 		assertThat(multiItemList.size(), equalTo(9));
 		assertThat(item, equalTo(9));
 	}
 	
 	@Test
 	public void removeFromMiddleOfList() {
-		int item = multiItemList.remove(3);
+		int item = multiItemList.removeAt(3);
 		assertThat(multiItemList.size(), equalTo(9));
 		assertThat(item, equalTo(3));
 	}
 	
 	@Test
 	public void removeMultipleFromFront() {
-		int first = multiItemList.remove(0);
-		int second = multiItemList.remove(0);
+		int first = multiItemList.removeAt(0);
+		int second = multiItemList.removeAt(0);
 		
 		assertThat(multiItemList.size(), equalTo(8));
 		assertThat(first, equalTo(0));
@@ -159,8 +159,8 @@ public class TestLinkedList {
 	
 	@Test
 	public void removeMultipleFromEnd() {
-		int first = multiItemList.remove(9);
-		int second = multiItemList.remove(8);
+		int first = multiItemList.removeAt(9);
+		int second = multiItemList.removeAt(8);
 		
 		assertThat(multiItemList.size(), equalTo(8));
 		assertThat(first, equalTo(9));
@@ -173,8 +173,8 @@ public class TestLinkedList {
 	
 	@Test
 	public void removeMultipleFromMiddle() {
-		int first = multiItemList.remove(5);
-		int second = multiItemList.remove(6);
+		int first = multiItemList.removeAt(5);
+		int second = multiItemList.removeAt(6);
 		
 		assertThat(multiItemList.size(), equalTo(8));
 		assertThat(first, equalTo(5));
@@ -199,5 +199,21 @@ public class TestLinkedList {
 	@Test
 	public void listContainingValueAtEndTrue() {
 		assertThat(multiItemList.contains(9), equalTo(true));
+	}
+	
+	@Test
+	public void removeItem() {
+		int item = multiItemList.remove(5);
+		
+		assertThat(multiItemList.size(), equalTo(9));
+		assertThat(multiItemList.contains(5), equalTo(false));
+		assertThat(item, equalTo(5));
+	}
+	
+	@Test
+	public void removeNonExistingItem() {
+		Integer item = multiItemList.remove(23);
+		
+		assertThat(item, equalTo(null));
 	}
 }
