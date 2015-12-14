@@ -2,6 +2,7 @@ package com.spharris.datastructures;
 
 import static org.junit.Assert.*;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -10,145 +11,173 @@ import static org.hamcrest.Matchers.*;
 
 public class TestLinkedList {
 	
+	private static final int NUM_ITEMS = 10;
+	
+	private LinkedList<Integer> emptyList = new LinkedList<>();
+	private LinkedList<Integer> singleItemList;
+	private LinkedList<Integer> multiItemList;
+	
+	@Before
+	public void createMultiItemList() {
+		multiItemList = new LinkedList<>();
+		for (int i = 0; i < NUM_ITEMS; i++) {
+			multiItemList.add(i);
+		}
+	}
+	
+	@Before
+	public void createSingleItemList() {
+		singleItemList = new LinkedList<>();
+		singleItemList.add(0);
+	}
+	
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	
 	@Test
 	public void isEmptyReturnsTrueForEmptyList() {
-		// Arrange
-		LinkedList<Object> l = new LinkedList<>();
-		
-		// Act
-		// None
-		
-		// Assert
-		assertThat(l.isEmpty(), equalTo(true));
+		assertThat(emptyList.isEmpty(), equalTo(true));
 	}
 	
 	@Test
 	public void emptyListHasZeroSize() {
-		// Arrange
-		LinkedList<Object> l = new LinkedList<Object>();
-		
-		// Act
-		// None
-		
-		// Assert
-		assertThat(l.size(), equalTo(0));
+		assertThat(emptyList.size(), equalTo(0));
 	}
 	
 	@Test
 	public void addOneItem() {
-		LinkedList<Integer> l = new LinkedList<>();
-		
-		l.add(5);
-		
-		assertThat(l.size(), equalTo(1));
-		assertThat(l.isEmpty(), equalTo(false));
+		assertThat(singleItemList.size(), equalTo(1));
+		assertThat(singleItemList.isEmpty(), equalTo(false));
 	}
 	
 	@Test
 	public void getAnItem() {
-		LinkedList<Integer> l = new LinkedList<>();
-		
-		l.add(5);
-		
-		assertThat(l.get(0), equalTo(5));
+		assertThat(singleItemList.get(0), equalTo(0));
 	}
 	
 	@Test
 	public void getAnItemThatDoesntExist() {
-		LinkedList<Integer> l = new LinkedList<>();
-		
 		thrown.expect(IndexOutOfBoundsException.class);
 		
-		l.get(0);
+		emptyList.get(0);
 	}
 	
 	@Test
 	public void getSecondItem() {
-		LinkedList<Integer> l = new LinkedList<>();
+		singleItemList.add(6);
 		
-		l.add(5);
-		l.add(6);
-		
-		assertThat(l.get(0), equalTo(5));
-		assertThat(l.get(1), equalTo(6));
+		assertThat(singleItemList.get(0), equalTo(0));
+		assertThat(singleItemList.get(1), equalTo(6));
 	}
 	
 	@Test
 	public void addManyItems() {
-		LinkedList<Integer> l = new LinkedList<>();
-		
-		int numItems = 10;
-		for (int i = 0; i < numItems; i++) {
-			l.add(i);
-		}
-		
-		assertThat(l.size(), equalTo(numItems));
-		for (int i = 0; i < numItems; i++) {
-			assertThat(l.get(i), equalTo(i));
+		assertThat(multiItemList.size(), equalTo(NUM_ITEMS));
+		for (int i = 0; i < NUM_ITEMS; i++) {
+			assertThat(multiItemList.get(i), equalTo(i));
 		}
 	}
 	
 	@Test
 	public void insert() {
-		LinkedList<Integer> l = new LinkedList<>();
-		
-		int numItems = 10;
-		for (int i = 0; i < numItems; i++) {
-			l.add(i);
-		}
-		
-		l.insert(4, 16);
-		assertThat(l.size(), equalTo(11));
-		assertThat(l.get(4), equalTo(16));
+		multiItemList.insert(4, 16);
+		assertThat(multiItemList.size(), equalTo(11));
+		assertThat(multiItemList.get(4), equalTo(16));
 	}
 	
 	@Test
 	public void insertAfterEndThrowsException() {
-		LinkedList<Integer> l = new LinkedList<>();
-		
-		int numItems = 10;
-		for (int i = 0; i < numItems; i++) {
-			l.add(i);
-		}
-		
 		thrown.expect(IndexOutOfBoundsException.class);
 		
-		l.insert(15, 10);
+		multiItemList.insert(15, 10);
 	}
 	
 	@Test
 	public void insertAtEnd() {
-		LinkedList<Integer> l = new LinkedList<>();
-		
-		int numItems = 10;
-		for (int i = 0; i < numItems; i++) {
-			l.add(i);
-		}
-		
-		l.insert(numItems, numItems);
-		assertThat(l.size(), equalTo(11));
-		for (int i = 0; i < numItems + 1; i++) {
-			assertThat(l.get(i), equalTo(i));
+		multiItemList.insert(NUM_ITEMS, NUM_ITEMS);
+		assertThat(multiItemList.size(), equalTo(11));
+		for (int i = 0; i < NUM_ITEMS + 1; i++) {
+			assertThat(multiItemList.get(i), equalTo(i));
 		}
 	}
 	
 	@Test
 	public void insertAtFront() {
-		LinkedList<Integer> l = new LinkedList<>();
-		
-		int numItems = 10;
-		for (int i = 0; i < numItems; i++) {
-			l.add(i);
+		multiItemList.insert(0, 25);
+		assertThat(multiItemList.size(), equalTo(11));
+		assertThat(multiItemList.get(0), equalTo(25));
+		for (int i = 1; i < NUM_ITEMS + 1; i++) {
+			assertThat(multiItemList.get(i), equalTo(i - 1));
 		}
+	}
+	
+	@Test
+	public void removeFromEmptyList() {
+		thrown.expect(IndexOutOfBoundsException.class);
 		
-		l.insert(0, 25);
-		assertThat(l.size(), equalTo(11));
-		assertThat(l.get(0), equalTo(25));
-		for (int i = 1; i < numItems + 1; i++) {
-			assertThat(l.get(i), equalTo(i - 1));
+		emptyList.remove(0);
+	}
+	
+	@Test
+	public void removeFromOneItemList() {
+		int item = singleItemList.remove(0);
+		
+		assertThat(singleItemList.size(), equalTo(0));
+		assertThat(item, equalTo(0));
+	}
+	
+	@Test
+	public void removeFromStartOfList() {
+		int item = multiItemList.remove(0);
+		assertThat(multiItemList.size(), equalTo(9));
+		assertThat(item, equalTo(0));
+	}
+	
+	@Test
+	public void removeFromEndOfList() {
+		int item = multiItemList.remove(9);
+		assertThat(multiItemList.size(), equalTo(9));
+		assertThat(item, equalTo(9));
+	}
+	
+	@Test
+	public void removeFromMiddleOfList() {
+		int item = multiItemList.remove(3);
+		assertThat(multiItemList.size(), equalTo(9));
+		assertThat(item, equalTo(3));
+	}
+	
+	@Test
+	public void removeMultipleFromFront() {
+		int first = multiItemList.remove(0);
+		int second = multiItemList.remove(0);
+		
+		assertThat(multiItemList.size(), equalTo(8));
+		assertThat(first, equalTo(0));
+		assertThat(second, equalTo(1));
+	}
+	
+	@Test
+	public void removeMultipleFromEnd() {
+		int first = multiItemList.remove(9);
+		int second = multiItemList.remove(8);
+		
+		assertThat(multiItemList.size(), equalTo(8));
+		assertThat(first, equalTo(9));
+		assertThat(second, equalTo(8));
+		
+		for (int i = 0; i < multiItemList.size() - 1; i++) {
+			assertThat(multiItemList.get(i), equalTo(i));
 		}
+	}
+	
+	@Test
+	public void removeMultipleFromMiddle() {
+		int first = multiItemList.remove(5);
+		int second = multiItemList.remove(6);
+		
+		assertThat(multiItemList.size(), equalTo(8));
+		assertThat(first, equalTo(5));
+		assertThat(second, equalTo(7));
 	}
 }

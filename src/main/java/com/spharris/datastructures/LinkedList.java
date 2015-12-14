@@ -53,7 +53,27 @@ public class LinkedList<T> {
 	}
 	
 	public T remove(int index) {
-		return null;
+		Node<T> node = getNode(index);
+		
+		if (node == first) {
+			first = node.getNext();
+		}
+		
+		if (node == last) {
+			last = node.getPrev();
+		}
+		
+		if (node.getPrev() != null) {
+			node.getPrev().setNext(node.getNext());
+		}
+		
+		if (node.getNext() != null) {
+			node.getNext().setPrev(node.getPrev());
+		}
+		
+		size--;
+		
+		return node.getData();
 	}
 	
 	public T remove(T item) {
