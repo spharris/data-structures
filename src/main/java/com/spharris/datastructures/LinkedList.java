@@ -85,7 +85,16 @@ public class LinkedList<T> {
 		return node.getData();
 	}
 	
+	/**
+	 * Returns true if there is at least one item in the list equal to item
+	 */
 	public boolean contains(T item) {
+		for (int i = 0; i < size; i++) {
+			if (get(i).equals(item)) {
+				return true;
+			}
+		}
+		
 		return false;
 	}
 	

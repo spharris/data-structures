@@ -180,4 +180,24 @@ public class TestLinkedList {
 		assertThat(first, equalTo(5));
 		assertThat(second, equalTo(7));
 	}
+	
+	@Test
+	public void emptyListContainsNothing() {
+		assertThat(emptyList.contains(5), equalTo(false));
+	}
+	
+	@Test
+	public void listNotContainingValueReturnsFalse() {
+		assertThat(singleItemList.contains(1), equalTo(false));
+	}
+	
+	@Test
+	public void listContainingValueReturnsTrue() {
+		assertThat(singleItemList.contains(0), equalTo(true));
+	}
+	
+	@Test
+	public void listContainingValueAtEndTrue() {
+		assertThat(multiItemList.contains(9), equalTo(true));
+	}
 }
