@@ -11,17 +11,17 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
-public class LinkedListTest {
+public class ArrayListTest {
 
   private static final int NUM_ITEMS = 10;
 
-  private List<Integer> emptyList = new LinkedList<>();
+  private List<Integer> emptyList = new ArrayList<>();
   private List<Integer> singleItemList;
   private List<Integer> multiItemList;
 
   @Before
   public void createMultiItemList() {
-    multiItemList = new LinkedList<>();
+    multiItemList = new ArrayList<>();
     for (int i = 0; i < NUM_ITEMS; i++) {
       multiItemList.add(i);
     }
@@ -29,7 +29,7 @@ public class LinkedListTest {
 
   @Before
   public void createSingleItemList() {
-    singleItemList = new LinkedList<>();
+    singleItemList = new ArrayList<>();
     singleItemList.add(0);
   }
 

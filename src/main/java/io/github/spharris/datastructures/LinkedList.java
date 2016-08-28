@@ -6,7 +6,7 @@ import java.util.ListIterator;
 /**
  * A doubly-linked list
  */
-public class LinkedList<T> implements List<T>, Iterable<T> {
+public class LinkedList<T> implements List<T> {
 
   private Node<T> head;
   private Node<T> tail;
@@ -18,12 +18,17 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
    */
   @Override
   public void add(T item) {
-    ListIterator<T> it = listIterator();
-    while (it.hasNext()) {
-      it.next();
+    Node<T> node = new Node<T>(item, null, tail);
+    if (head == null) {
+      head = node;
     }
     
-    it.add(item);
+    if (tail != null) {
+      tail.next = node;
+    }
+    
+    tail = node;
+    size++;
   }
 
   @Override
