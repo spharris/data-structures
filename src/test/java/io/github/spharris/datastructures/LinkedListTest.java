@@ -8,7 +8,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class TestLinkedList {
+public class LinkedListTest {
 
   private static final int NUM_ITEMS = 10;
 

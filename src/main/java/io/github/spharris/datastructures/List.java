@@ -1,5 +1,7 @@
 package io.github.spharris.datastructures;
 
+import java.util.ListIterator;
+
 public interface List<T> {
   void add(T item);
   void insert(int index, T item);
@@ -9,4 +11,5 @@ public interface List<T> {
   boolean contains(T item);
   int size();
   boolean isEmpty();
+  ListIterator<T> listIterator();
 }

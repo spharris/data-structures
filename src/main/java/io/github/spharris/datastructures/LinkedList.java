@@ -1,66 +1,56 @@
 package io.github.spharris.datastructures;
 
+import java.util.Iterator;
+import java.util.ListIterator;
+
 /**
  * A doubly-linked list
  */
-public class LinkedList<T> implements List<T> {
+public class LinkedList<T> implements List<T>, Iterable<T> {
 
-  private Node<T> first;
-  private Node<T> last;
+  private Node<T> head;
+  private Node<T> tail;
 
   private int size = 0;
 
   /**
    * Adds an item to the end of the list
    */
+  @Override
   public void add(T item) {
-    insert(size, item);
+    ListIterator<T> it = listIterator();
+    while (it.hasNext()) {
+      it.next();
+    }
+    
+    it.add(item);
   }
 
+  @Override
   public void insert(int index, T item) {
-    if (index > size) {
-      throw new IndexOutOfBoundsException();
+    ListIterator<T> it = listIterator();
+    for (int i = 0; i < index; i++) {
+      it.next();
     }
-
-    if (index == 0) {
-      Node<T> newNode = new Node<>(item, first, null);
-      if (first == null) {
-        // This was the first item in the list
-        last = newNode;
-      } else {
-        first.setPrev(newNode);
-      }
-
-      first = newNode;
-    } else if (index == size) {
-      // Inserting at end of list. Don't set a next item
-      Node<T> node = last;
-      Node<T> newNode = new Node<>(item, null, node);
-      last = newNode;
-
-      // node can't be null because the list would have been empty and it would have
-      // been caught above
-      node.setNext(newNode);
-    } else {
-      // Setting in the middle of the list
-      Node<T> node = getNode(index);
-      Node<T> newNode = new Node<>(item, node.getPrev(), node);
-      node.getPrev().setNext(newNode);
-      node.setPrev(newNode);
-    }
-
-    size++;
+    
+    it.add(item);
   }
 
+  @Override
   public T removeAt(int index) {
-    Node<T> node = getNode(index);
-    removeNode(node);
-
-    return node.getData();
+    ListIterator<T> it = listIterator();
+    T data = it.next();
+    for (int i = 0; i < index; i++) {
+      data = it.next();
+    }
+    
+    it.remove();
+    return data;
   }
 
+  @Override
   public T remove(T item) {
-    Iterator it = new Iterator();
+    ListIterator<T> it = listIterator();
     while (it.hasNext()) {
       T data = it.next();
       if (data.equals(item)) {
@@ -72,16 +62,22 @@ public class LinkedList<T> implements List<T> {
     return null;
   }
 
+  @Override
   public T get(int index) {
-    Node<T> node = getNode(index);
-    return node.getData();
+    ListIterator<T> it = listIterator();
+    for (int i = 0; i < index; i++) {
+      it.next();
+    }
+    
+    return it.next();
   }
 
   /**
    * Returns true if there is at least one item in the list equal to item
    */
+  @Override
   public boolean contains(T item) {
-    Iterator it = new Iterator();
+    ListIterator<T> it = listIterator();
     while (it.hasNext()) {
       T data = it.next();
       if (data.equals(item)) {
@@ -92,22 +88,26 @@ public class LinkedList<T> implements List<T> {
     return false;
   }
 
+  @Override
   public int size() {
     return size;
   }
 
+  @Override
   public boolean isEmpty() {
     return size == 0;
   }
 
+  @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("[");
 
-    if (size > 0) {
-      sb.append(first.toString());
-      for (int i = 1; i < size; i++) {
-        sb.append(", " + get(i).toString());
+    ListIterator<T> it = listIterator();
+    if (it.hasNext()) {
+      sb.append(it.next());
+      while(it.hasNext()) {
+        sb.append(", " + it.next().toString());
       }
     }
 
@@ -115,90 +115,154 @@ public class LinkedList<T> implements List<T> {
     return sb.toString();
   }
 
-  private Node<T> getNode(int index) {
-    if (index > (size - 1)) {
-      throw new IndexOutOfBoundsException();
-    }
+  private class LinkedListIterator implements ListIterator<T> {
 
-    int currentIndex = 0;
-    Node<T> currentNode = first;
-    while (currentIndex != index) {
-      currentNode = currentNode.getNext();
-      currentIndex++;
-    }
-
-    return currentNode;
-  }
-
-  /**
-   * Assumes that node is contained in the list
-   */
-  private Node<T> removeNode(Node<T> node) {
-    if (node == first) {
-      first = node.getNext();
-    }
-
-    if (node == last) {
-      last = node.getPrev();
-    }
-
-    if (node.getPrev() != null) {
-      node.getPrev().setNext(node.getNext());
-    }
-
-    if (node.getNext() != null) {
-      node.getNext().setPrev(node.getPrev());
-    }
-
-    size--;
-
-    return node;
-  }
-
-  private class Iterator {
-
+    private int index;
+    private Node<T> previous;
     private Node<T> current;
+    private Node<T> next;
 
-    public Iterator() {
-      current = first;
+    public LinkedListIterator() {
+      next = head;
+      previous = null;
+      current = null;
+      index = 0;
     }
 
+    @Override
     public T next() {
-      return nextNode().getData();
-    }
-
-    public Node<T> nextNode() {
       if (!hasNext()) {
         throw new IndexOutOfBoundsException();
       }
 
-      if (current == null) {
-        current = first;
-      } else {
-        current = current.getNext();
-      }
+      T data = next.data;
+      previous = next;
+      current = next;
+      next = next.next;
+      index++;
 
-      return current;
+      return data;
     }
 
+    @Override
     public boolean hasNext() {
-      if (current == null) {
-        return false;
-      } else {
-
-        return true;
-      }
+      return next != null;
     }
 
-    public T remove() {
-      removeNode(current);
-      return current.getData();
+    @Override
+    public void remove() {
+      if (current == null) {
+        throw new IllegalStateException();
+      }
+      
+      if (current == head) {
+         head = next;
+         previous = null;
+
+         if (next != null) {
+           next.prev = null;
+         }
+      } else if (current == tail) {
+        tail = previous;
+        
+        if (previous != null) {
+          previous.next = null;
+        }
+      } else {
+        if (current == next) {
+          previous.next = next.next;
+          next.next.prev = previous;
+          next = next.next;
+        } else {
+          next.prev = previous.prev;
+          previous.prev.next = next;
+          previous = previous.prev;
+        }
+      }
+      
+      size--;
+      current = null;
+    }
+
+    @Override
+    public boolean hasPrevious() {
+      return previous != null;
+    }
+
+    @Override
+    public T previous() {
+      if (!hasPrevious()) {
+        throw new IndexOutOfBoundsException();
+      }
+      
+      T data = previous.data;
+      next = previous;
+      current = previous;
+      previous = previous.prev;
+      index--;
+
+      return data;
+    }
+
+    @Override
+    public int nextIndex() {
+      return index;
+    }
+
+    @Override
+    public int previousIndex() {
+      return index - 1;
+    }
+
+    @Override
+    public void set(T e) {
+      if (!hasNext()) {
+        throw new IndexOutOfBoundsException();
+      }
+      
+      if (current == null) {
+        throw new IllegalStateException();
+      }
+
+      current.data = e;
+    }
+
+    @Override
+    public void add(T e) {
+      current = null;
+      index++;
+      size++;
+      if (head == null) {
+        head = new Node<T>(e, null, null);
+        tail = head;
+        previous = tail;
+        return;
+      }
+      
+      Node<T> newNode = new Node<T>(e, next, previous);
+      if (previous != null) {
+        previous.next = newNode;
+      }
+      
+      previous = newNode;
+      
+      if (next != null) {
+        next.prev = previous;
+      }
+      
+      if (next == head) {
+        head = newNode;
+      }
+      
+      if (next == null) {
+        tail = newNode;
+      }
     }
   }
 
   private static class Node<T> {
 
-    private T data;
+    T data;
 
     Node<T> next;
     Node<T> prev;
@@ -209,26 +273,6 @@ public class LinkedList<T> implements List<T> {
       this.prev = prev;
     }
 
-    public Node<T> getNext() {
-      return next;
-    }
-
-    public void setNext(Node<T> node) {
-      this.next = node;
-    }
-
-    public Node<T> getPrev() {
-      return prev;
-    }
-
-    public void setPrev(Node<T> node) {
-      this.prev = node;
-    }
-
-    public T getData() {
-      return data;
-    }
-
     @Override
     public String toString() {
       if (data == null) {
@@ -237,5 +281,15 @@ public class LinkedList<T> implements List<T> {
         return data.toString();
       }
     }
+  }
+
+  @Override
+  public Iterator<T> iterator() {
+    return new LinkedListIterator();
+  }
+
+  @Override
+  public ListIterator<T> listIterator() {
+    return new LinkedListIterator();
   }
 }
